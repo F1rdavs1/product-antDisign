@@ -1,32 +1,33 @@
 import React from "react";
 import { Select } from "antd";
-const SeletCustom = ({ setProductType }) => {
+const SeletCustom = ({ setProductType, productType }) => {
   function handleChange(id, obj) {
     setProductType(id);
   }
   return (
     <Select
+    value={productType}
       className="w-full"
       onChange={handleChange}
       size="large"
       allowClear
       showSearch
-      placeholder="Mahsulot turini tanlang!"
+      placeholder="Choose a product type!"
       filterOption={(input, option) =>
         (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
       }
       options={[
         {
           value: "1",
-          label: "Mevalar",
+          label: "Fruits",
         },
         {
           value: "2",
-          label: "Sabzavotlar",
+          label: "Vegetables",
         },
         {
           value: "3",
-          label: "Ziravorlar",
+          label: "Spices",
         },
       ]}
     />

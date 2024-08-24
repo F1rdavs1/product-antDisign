@@ -8,6 +8,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.ant-menu-item-selected {
+.ant-menu-item-selected,
+.ant-btn-primary {
   background-color: green;
 }

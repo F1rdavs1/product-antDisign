@@ -1,40 +1,82 @@
 import { Button, DatePicker, Input } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SeletCustom from "../components/SelectCustom";
-import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useAxios } from "../hook/useAxios";
+import dayjs from "dayjs";
 
 function Product() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const nowDate = dayjs().format("YYYY-MM-DD");
+
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productType, setProductType] = useState("");
-  const [productDate, setProductDate] = useState("");
+  const [productDate, setProductDate] = useState(nowDate);
 
   const changeDate = (date, dateString) => {
     setProductDate(dateString);
   };
-  function handleAddProduct(e) {
+
+  const handleAddProduct = (e) => {
     e.preventDefault();
-    const dataObj = {
+    const data = {
       productName,
       productPrice,
       productType,
       productDate,
     };
-    axios
-      .post("http://localhost:3000/product", dataObj)
-      .then((res) => {
-        toast.success("Mahsulotlar qoshildi");
-        setTimeout(() => {
-          navigate("/");
-        }, 800);
-      })
-      .catch((err) => {
-        toast.error("Xatolik bor");
-      });
-  }
+
+    const axiosInstance = useAxios();
+
+    if (id) {
+      axiosInstance
+        .put(`product/${id}`, data)
+        .then((res) => {
+          toast.success("Successfully updated");
+          setTimeout(() => {
+            navigate("/");
+          }, 800);
+        })
+        .catch((err) => {
+          toast.error("You have some error! ");
+        });
+    } else {
+      axiosInstance
+        .post("product", data)
+        .then((res) => {
+          toast.success("Successfully added");
+          setTimeout(() => {
+            navigate("/");
+          }, 800);
+        })
+        .catch((err) => {
+          toast.error("You have some error! ");
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      const axiosInstance = useAxios();
+      axiosInstance
+        .get(`/product/${id}`)
+        .then((res) => {
+          setProductName(res.data.productName);
+          setProductPrice(res.data.productPrice);
+          setProductType(res.data.productType);
+          setProductDate(res.data.productDate);
+        })
+        .catch((err) => {
+          toast.error("Failed to fetch product data");
+        });
+    }
+  }, [id]);
+
   return (
     <form
       className="space-y-[10px] h-[100vh] overflow-y-auto"
@@ -42,14 +84,21 @@ function Product() {
     >
       <Toaster position="top-center" reverseOrder={false} />
       <div className="p-5 flex items-center justify-between">
-        <h2 className="text-[20px] font-bold">ADD Product</h2>
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={() => navigate(-1)}>
+            <ArrowLeftOutlined className="scale-y-125" />
+          </button>
+          <h2 className="text-[20px] font-bold">
+            {id ? "Update" : "Add"} Product
+          </h2>
+        </div>
         <Button
           className="!bg-[green] hover:opacity-50 px-[15px]"
           htmlType="submit"
           type="primary"
           size="large"
         >
-          Save Product
+          {id ? "Update" : "Save"} Product
         </Button>
       </div>
       <div className="w-[450px] p-5 space-y-[10px]">
@@ -76,12 +125,17 @@ function Product() {
           name="product-name"
           autoComplete="off"
         />
-        <SeletCustom setProductType={setProductType} />
+        <SeletCustom
+          setProductType={setProductType}
+          productType={productType}
+        />
         <DatePicker
+          value={dayjs(productDate, "YYYY-MM-DD")}
           required
           size="large"
           className="p-2 w-[100%]"
           onChange={changeDate}
+          format="YYYY-MM-DD"
         />
       </div>
     </form>

@@ -7,13 +7,14 @@ function index() {
   return (
     <div className="flex">
       <div className="w-[20%]">
-        <Navbar/>
+        <Navbar />
       </div>
       <div className="w-[80%]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/product/:id" element={<SingleProduct />} />
+          <Route path="/update/:id" element={<AddProduct />} />
+          <Route path="/:id" element={<SingleProduct />} />
         </Routes>
       </div>
     </div>

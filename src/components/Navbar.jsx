@@ -10,15 +10,6 @@ const items = [
     label: <p className="text-[25px] pl-[5px]">Product</p>,
     children: [
       {
-        key: "11",
-        label: (
-          <Link to={"/"} className="text-[18px]">
-            All Products
-          </Link>
-        ),
-        icon: <MinusCircleOutlined className="scale-[1.2]" />,
-      },
-      {
         key: "12",
         label: (
           <Link to={"/add-product"} className="text-[18px]">
@@ -53,20 +44,16 @@ const Navbar = () => {
     const currentOpenKey = openKeys.find(
       (key) => stateOpenKeys.indexOf(key) === -1
     );
-    // open
     if (currentOpenKey !== undefined) {
       const repeatIndex = openKeys
         .filter((key) => key !== currentOpenKey)
         .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
       setStateOpenKeys(
         openKeys
-          // remove repeat key
           .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
           .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
       );
     } else {
-      // close
       setStateOpenKeys(openKeys);
     }
   };
